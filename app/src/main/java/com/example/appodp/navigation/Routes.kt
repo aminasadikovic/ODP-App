@@ -5,4 +5,6 @@ object Routes {
     const val ONBOARDING = "onboarding"
     const val CONFIGURATION = "configuration"
     const val ACTIVE_REGISTRATIONS = "active_registrations"
+    const val REGISTERED_VEHICLES = "registered_vehicles"
+
 }

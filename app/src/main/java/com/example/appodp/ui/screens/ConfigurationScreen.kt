@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.appodp.navigation.Routes
 
 @Composable
 fun ConfigurationScreen(navController: NavController) {
@@ -57,8 +58,17 @@ fun ConfigurationScreen(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate("active_registrations?dataset=${selectedDataSet.replace(" ", "_")}") {
-                    popUpTo("configuration") { inclusive = true }
+                when (selectedDataSet) {
+                    "Registrovana vozila" -> {
+                        navController.navigate(Routes.REGISTERED_VEHICLES) {
+                            popUpTo(Routes.CONFIGURATION) { inclusive = true }
+                        }
+                    }
+                    else -> {
+                        navController.navigate("${Routes.ACTIVE_REGISTRATIONS}?dataset=${selectedDataSet.replace(" ", "_")}") {
+                            popUpTo(Routes.CONFIGURATION) { inclusive = true }
+                        }
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()

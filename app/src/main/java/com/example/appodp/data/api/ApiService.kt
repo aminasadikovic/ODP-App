@@ -16,4 +16,10 @@ interface ApiService {
     fun getActiveRegistrations(
         @Body request: ActiveRegistrationRequest
     ): Call<ApiResponse<List<ActiveRegistration>>>
+
+    @POST("api/RegisteredVehiclesNumbers/list")
+    fun getRegisteredVehicles(
+        @Body request: RegisteredVehicleRequest
+    ): Call<List<RegisteredVehicle>>
+
 }

@@ -7,11 +7,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.appodp.ui.screens.ActiveRegistrationScreen
-import com.example.appodp.ui.screens.ConfigurationScreen
-import com.example.appodp.ui.screens.OnboardingScreen
-import com.example.appodp.ui.screens.SplashScreen
 import com.example.appodp.viewmodel.ActiveRegistrationViewModel
+import com.example.appodp.viewmodel.RegisteredVehiclesViewModel
+import com.example.appodp.ui.screens.SplashScreen
+import com.example.appodp.ui.screens.OnboardingScreen
+import com.example.appodp.ui.screens.ConfigurationScreen
+import com.example.appodp.ui.screens.ActiveRegistrationScreen
+import com.example.appodp.ui.screens.RegisteredVehiclesScreen
 import com.example.appodp.navigation.Routes
 
 @Composable
@@ -40,6 +42,12 @@ fun AppNavigation(navController: NavHostController) {
                 viewModel = viewModel,
                 selectedDataSet = dataset.replace("_", " ")
             )
+        }
+
+        // ✅ NOVA RUTA
+        composable(Routes.REGISTERED_VEHICLES) {
+            val registeredViewModel: RegisteredVehiclesViewModel = viewModel()
+            RegisteredVehiclesScreen(viewModel = registeredViewModel)
         }
     }
 }

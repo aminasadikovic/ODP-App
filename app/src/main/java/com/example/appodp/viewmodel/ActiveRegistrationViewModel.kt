@@ -19,10 +19,10 @@ class ActiveRegistrationViewModel : ViewModel() {
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> = _error
 
-    fun loadRegistrations() {
+    fun loadRegistrations(entityId: Int) {
         val request = ActiveRegistrationRequest(
-            updateDate = "2025-04-07",
-            entityId = 0,
+            updateDate = "2025-07-03",
+            entityId = entityId,
             cantonId = 0,
             municipalityId = 0
         )

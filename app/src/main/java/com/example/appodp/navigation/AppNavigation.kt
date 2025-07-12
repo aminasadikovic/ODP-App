@@ -1,6 +1,7 @@
 package com.example.appodp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.core.splashscreen.SplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -9,16 +10,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.appodp.viewmodel.ActiveRegistrationViewModel
 import com.example.appodp.viewmodel.RegisteredVehiclesViewModel
-import com.example.appodp.ui.screens.SplashScreen
 import com.example.appodp.ui.screens.OnboardingScreen
 import com.example.appodp.ui.screens.ConfigurationScreen
-import com.example.appodp.ui.screens.ActiveRegistrationScreen
 import com.example.appodp.ui.screens.RegisteredVehiclesScreen
+import com.example.appodp.ui.screens.ActiveRegistrationScreen
 import com.example.appodp.navigation.Routes
+import com.example.appodp.ui.screens.RegisteredVehiclesIndividualsScreen
+import com.example.appodp.ui.screens.SplashScreen
+import com.example.appodp.viewmodel.RegisteredVehiclesIndividualsViewModel
+import com.example.appodp.viewmodel.VehicleRegistrationRequestsViewModel
+import com.example.appodp.ui.screens.VehicleRegistrationRequestsScreen
+import com.example.appodp.viewmodel.RegisteredVehiclesBulletinViewModel
+import com.example.appodp.ui.screens.RegisteredVehiclesBulletinScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    val viewModel: ActiveRegistrationViewModel = viewModel()
+    val activeViewModel: ActiveRegistrationViewModel = viewModel()
+    val registeredViewModel: RegisteredVehiclesViewModel = viewModel()
+    val viewModel: RegisteredVehiclesIndividualsViewModel = viewModel()
+    val viewModel2: VehicleRegistrationRequestsViewModel = viewModel()
+    val viewModel3: RegisteredVehiclesBulletinViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Routes.SPLASH) {
         composable(Routes.SPLASH) {
@@ -30,24 +41,28 @@ fun AppNavigation(navController: NavHostController) {
         composable(Routes.CONFIGURATION) {
             ConfigurationScreen(navController = navController)
         }
-        composable(
-            route = Routes.ACTIVE_REGISTRATIONS + "?dataset={dataset}",
-            arguments = listOf(navArgument("dataset") {
-                defaultValue = "Broj_aktivnih_registracija"
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val dataset = backStackEntry.arguments?.getString("dataset") ?: "Broj_aktivnih_registracija"
+        composable(Routes.ACTIVE_REGISTRATIONS) {
             ActiveRegistrationScreen(
-                viewModel = viewModel,
-                selectedDataSet = dataset.replace("_", " ")
+                viewModel = activeViewModel
             )
         }
 
-        // ✅ NOVA RUTA
         composable(Routes.REGISTERED_VEHICLES) {
-            val registeredViewModel: RegisteredVehiclesViewModel = viewModel()
             RegisteredVehiclesScreen(viewModel = registeredViewModel)
         }
+
+        composable(Routes.REGISTERED_VEHICLES_INDIVIDUALS) {
+            RegisteredVehiclesIndividualsScreen(viewModel = viewModel)
+        }
+
+        composable(Routes.VEHICLE_REGISTRATION_REQUESTS) {
+            VehicleRegistrationRequestsScreen(viewModel = viewModel2)
+        }
+
+        composable(Routes.REGISTERED_VEHICLES_BULLETIN) {
+            RegisteredVehiclesBulletinScreen(viewModel = viewModel3)
+        }
+
+
     }
 }

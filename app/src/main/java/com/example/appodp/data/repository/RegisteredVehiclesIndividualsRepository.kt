@@ -1,26 +1,24 @@
 package com.example.appodp.data.repository
 
-import com.example.appodp.data.model.ApiResponse
-import com.example.appodp.data.model.RegisteredVehicle
-import com.example.appodp.data.model.RegisteredVehicleRequest
 import com.example.appodp.data.api.RetrofitInstance
+import com.example.appodp.data.model.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisteredVehiclesRepository {
+class RegisteredVehiclesIndividualsRepository {
 
-    fun fetchRegisteredVehicles(
-        request: RegisteredVehicleRequest,
-        onSuccess: (List<RegisteredVehicle>) -> Unit,
+    fun fetchRegisteredVehiclesIndividuals(
+        request: RegisteredVehicleIndividualRequest,
+        onSuccess: (List<RegisteredVehicleIndividual>) -> Unit,
         onError: (String) -> Unit
     ) {
-        val call = RetrofitInstance.api.getRegisteredVehicles(request)
+        val call = RetrofitInstance.api.getRegisteredVehiclesIndividuals(request)
 
-        call.enqueue(object : Callback<ApiResponse<List<RegisteredVehicle>>> {
+        call.enqueue(object : Callback<ApiResponse<List<RegisteredVehicleIndividual>>> {
             override fun onResponse(
-                call: Call<ApiResponse<List<RegisteredVehicle>>>,
-                response: Response<ApiResponse<List<RegisteredVehicle>>>
+                call: Call<ApiResponse<List<RegisteredVehicleIndividual>>>,
+                response: Response<ApiResponse<List<RegisteredVehicleIndividual>>>
             ) {
                 if (response.isSuccessful) {
                     val body = response.body()
@@ -34,7 +32,7 @@ class RegisteredVehiclesRepository {
                 }
             }
 
-            override fun onFailure(call: Call<ApiResponse<List<RegisteredVehicle>>>, t: Throwable) {
+            override fun onFailure(call: Call<ApiResponse<List<RegisteredVehicleIndividual>>>, t: Throwable) {
                 onError("Greška: ${t.message}")
             }
         })

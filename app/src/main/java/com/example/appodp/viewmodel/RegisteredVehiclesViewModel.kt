@@ -19,21 +19,26 @@ class RegisteredVehiclesViewModel : ViewModel() {
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> = _error
 
-    fun loadVehicles() {
+    fun loadVehicles(entityId: Int, year: Int?, month: Int?) {
+        // Konvertuj Int? u String, ili prazno ako null
+        val yearString = year?.toString() ?: ""
+        // Mjesec sa vodećim nulama (01, 02...) ako je definisan
+        val monthString = month?.toString()?.padStart(2, '0') ?: ""
+
         val request = RegisteredVehicleRequest(
-            updateDate = "2023-06-29",
-            entityId = 0,
+            updateDate = "",
+            entityId = entityId,
             cantonId = 0,
             municipalityId = 0,
-            year = "",
-            month = ""
+            year = yearString,
+            month = monthString
         )
 
         viewModelScope.launch {
             repository.fetchRegisteredVehicles(
                 request = request,
-                onSuccess = { _vehicles.value = it },
-                onError = { _error.value = it }
+                onSuccess = { result -> _vehicles.value = result },
+                onError = { err -> _error.value = err }
             )
         }
     }

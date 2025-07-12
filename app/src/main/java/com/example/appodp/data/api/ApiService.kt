@@ -1,17 +1,12 @@
 package com.example.appodp.data.api
 
 import com.example.appodp.data.model.*
-import retrofit2.http.Body
-import retrofit2.http.Headers
-import retrofit2.http.POST
 import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface ApiService {
 
-    @Headers(
-        "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMDg4IiwibmJmIjoxNzUyMTgzNzEwLCJleHAiOjE3NTIyNzAxMTAsImlhdCI6MTc1MjE4MzcxMH0.LTD9lKoH39q5mKtP5ONwuNK1HMeU58g44leStiQ0VW2unyBuPXWRjCBwO1mWqOBLPEz6QIOWaOy1e4k9RXFzlw",
-        "Accept: application/json"
-    )
     @POST("api/NumberOfActiveRegistrations/list")
     fun getActiveRegistrations(
         @Body request: ActiveRegistrationRequest
@@ -20,6 +15,21 @@ interface ApiService {
     @POST("api/RegisteredVehiclesNumbers/list")
     fun getRegisteredVehicles(
         @Body request: RegisteredVehicleRequest
-    ): Call<List<RegisteredVehicle>>
+    ): Call<ApiResponse<List<RegisteredVehicle>>>
+
+    @POST("api/RegisteredVehiclesIndividuals/list")
+    fun getRegisteredVehiclesIndividuals(
+        @Body request: RegisteredVehicleIndividualRequest
+    ): Call<ApiResponse<List<RegisteredVehicleIndividual>>>
+
+    @POST("api/VehicleRegistrationRequests/list")
+    fun getVehicleRegistrationRequests(
+        @Body request: VehicleRegistrationRequestRequest
+    ): Call<ApiResponse<List<VehicleRegistrationRequestResponse>>>
+
+    @POST("api/RegisteredVehiclesBulletin/list")
+    fun getRegisteredVehiclesBulletin(
+        @Body request: RegisteredVehiclesBulletinRequest
+    ): Call<ApiResponse<List<RegisteredVehiclesBulletinResponse>>>
 
 }

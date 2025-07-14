@@ -2,6 +2,7 @@
 agp = "8.9.1"
 converterGson = "2.9.0"
 kotlin = "2.0.21"
+room = "2.7.2"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -17,6 +18,10 @@ cronetEmbedded = "119.6045.31"
 retrofit = "2.9.0"
 coreSplashscreen = "1.0.1"
 compose = "1.5.4"
+accompanist = "0.30.1"
+ksp="2.0.21-1.0.25"
+coroutines = "1.8.0"
+vico = "1.13.0" # NOVO: Verzija za Vico
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,8 +48,17 @@ cronet-embedded = { group = "org.chromium.net", name = "cronet-embedded", versio
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
-
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+vico-compose-m3 = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "vico" } # NOVO
+vico-compose = { module = "com.patrykandpatrick.vico:compose", version.ref = "vico" }
+vico-core = { module = "com.patrykandpatrick.vico:core", version.ref = "vico" }             # NOVO
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

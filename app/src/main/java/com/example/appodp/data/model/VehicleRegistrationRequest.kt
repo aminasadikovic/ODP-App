@@ -1,10 +1,10 @@
 package com.example.appodp.data.model
 
 data class VehicleRegistrationRequestRequest(
-    val updateDate: String,
-    val entityId: Int,
-    val cantonId: Int,
-    val municipalityId: Int,
-    val year: String,
-    val month: String
+    val updateDate: String? = null,
+    val entityId: Int? = null,
+    val cantonId: Int?, // Dodan '?' za nullable Int
+    val municipalityId: Int?, // Dodan '?' za nullable Int
+    val year: String?, // Dodan '?' za nullable String
+    val month: String? // Dodan '?' za nullable String
 )

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.ksp) // ← OVO DODAJ
 }
 
 android {
@@ -57,8 +58,8 @@ dependencies {
     implementation(libs.cronet.embedded)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-    implementation (libs.androidx.lifecycle.viewmodel.ktx)
-    implementation (libs.androidx.lifecycle.runtime.ktx.v262)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
     implementation(libs.material.icons.extended)
     implementation(libs.androidx.core.splashscreen)
     testImplementation(libs.junit)
@@ -68,4 +69,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+    implementation(libs.accompanist.swiperefresh)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.core)
 }

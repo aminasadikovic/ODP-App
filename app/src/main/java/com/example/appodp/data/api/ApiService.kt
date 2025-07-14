@@ -17,19 +17,10 @@ interface ApiService {
         @Body request: RegisteredVehicleRequest
     ): Call<ApiResponse<List<RegisteredVehicle>>>
 
-    @POST("api/RegisteredVehiclesIndividuals/list")
-    fun getRegisteredVehiclesIndividuals(
-        @Body request: RegisteredVehicleIndividualRequest
-    ): Call<ApiResponse<List<RegisteredVehicleIndividual>>>
-
     @POST("api/VehicleRegistrationRequests/list")
     fun getVehicleRegistrationRequests(
         @Body request: VehicleRegistrationRequestRequest
     ): Call<ApiResponse<List<VehicleRegistrationRequestResponse>>>
 
-    @POST("api/RegisteredVehiclesBulletin/list")
-    fun getRegisteredVehiclesBulletin(
-        @Body request: RegisteredVehiclesBulletinRequest
-    ): Call<ApiResponse<List<RegisteredVehiclesBulletinResponse>>>
 
 }

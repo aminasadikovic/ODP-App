@@ -1,35 +1,27 @@
+// com.example.appodp.navigation.AppNavigation.kt
 package com.example.appodp.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.core.splashscreen.SplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.appodp.viewmodel.ActiveRegistrationViewModel
-import com.example.appodp.viewmodel.RegisteredVehiclesViewModel
+import androidx.navigation.NavType
 import com.example.appodp.ui.screens.OnboardingScreen
 import com.example.appodp.ui.screens.ConfigurationScreen
 import com.example.appodp.ui.screens.RegisteredVehiclesScreen
-import com.example.appodp.ui.screens.ActiveRegistrationScreen
-import com.example.appodp.navigation.Routes
-import com.example.appodp.ui.screens.RegisteredVehiclesIndividualsScreen
 import com.example.appodp.ui.screens.SplashScreen
-import com.example.appodp.viewmodel.RegisteredVehiclesIndividualsViewModel
-import com.example.appodp.viewmodel.VehicleRegistrationRequestsViewModel
 import com.example.appodp.ui.screens.VehicleRegistrationRequestsScreen
-import com.example.appodp.viewmodel.RegisteredVehiclesBulletinViewModel
-import com.example.appodp.ui.screens.RegisteredVehiclesBulletinScreen
+import com.example.appodp.ui.screens.ActiveRegistrationScreen
+import com.example.appodp.ui.screens.VehicleRequestDetailsScreen
+import com.example.appodp.data.model.VehicleRegistrationRequestResponse
+import com.example.appodp.ui.screens.FavoriteRegisteredVehiclesScreen
+
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    val activeViewModel: ActiveRegistrationViewModel = viewModel()
-    val registeredViewModel: RegisteredVehiclesViewModel = viewModel()
-    val viewModel: RegisteredVehiclesIndividualsViewModel = viewModel()
-    val viewModel2: VehicleRegistrationRequestsViewModel = viewModel()
-    val viewModel3: RegisteredVehiclesBulletinViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Routes.SPLASH) {
         composable(Routes.SPLASH) {
@@ -42,27 +34,61 @@ fun AppNavigation(navController: NavHostController) {
             ConfigurationScreen(navController = navController)
         }
         composable(Routes.ACTIVE_REGISTRATIONS) {
-            ActiveRegistrationScreen(
-                viewModel = activeViewModel
+            ActiveRegistrationScreen()
+        }
+        composable(Routes.REGISTERED_VEHICLES) {
+            // Uklonjen onNavigateToDetails callback jer nema posebnog detail ekrana za RegisteredVehicle
+            RegisteredVehiclesScreen()
+        }
+        composable(Routes.FAVORITE_REGISTERED_VEHICLES) {
+            FavoriteRegisteredVehiclesScreen(navController = navController)
+        }
+        composable(Routes.VEHICLE_REGISTRATION_REQUESTS) {
+            VehicleRegistrationRequestsScreen(
+                onNavigateToDetails = { request ->
+                    navController.navigate(
+                        Routes.vehicleRequestDetailsRoute(
+                            registrationPlace = request.registrationPlace,
+                            permanentRegistration = request.permanentRegistration,
+                            firstTimeRequestsTotal = request.firstTimeRequestsTotal,
+                            renewalRequestsTotal = request.renewalRequestsTotal,
+                            ownershipChangesTotal = request.ownershipChangesTotal,
+                            deregisteredTotal = request.deregisteredTotal
+                        )
+                    )
+                }
             )
         }
+        composable(
+            route = Routes.VEHICLE_REQUEST_DETAILS,
+            arguments = listOf(
+                navArgument("registrationPlace") { type = NavType.StringType },
+                navArgument("permanentRegistration") { type = NavType.IntType },
+                navArgument("firstTimeRequestsTotal") { type = NavType.IntType },
+                navArgument("renewalRequestsTotal") { type = NavType.IntType },
+                navArgument("ownershipChangesTotal") { type = NavType.IntType },
+                navArgument("deregisteredTotal") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val registrationPlace = backStackEntry.arguments?.getString("registrationPlace")?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) } ?: ""
+            val permanentRegistration = backStackEntry.arguments?.getInt("permanentRegistration") ?: 0
+            val firstTimeRequestsTotal = backStackEntry.arguments?.getInt("firstTimeRequestsTotal") ?: 0
+            val renewalRequestsTotal = backStackEntry.arguments?.getInt("renewalRequestsTotal") ?: 0
+            val ownershipChangesTotal = backStackEntry.arguments?.getInt("ownershipChangesTotal") ?: 0
+            val deregisteredTotal = backStackEntry.arguments?.getInt("deregisteredTotal") ?: 0
 
-        composable(Routes.REGISTERED_VEHICLES) {
-            RegisteredVehiclesScreen(viewModel = registeredViewModel)
+            val tempRequest = VehicleRegistrationRequestResponse(
+                registrationPlace = registrationPlace,
+                permanentRegistration = permanentRegistration,
+                firstTimeRequestsTotal = firstTimeRequestsTotal,
+                renewalRequestsTotal = renewalRequestsTotal,
+                ownershipChangesTotal = ownershipChangesTotal,
+                deregisteredTotal = deregisteredTotal
+            )
+            VehicleRequestDetailsScreen(
+                request = tempRequest,
+                onBackClick = { navController.popBackStack() }
+            )
         }
-
-        composable(Routes.REGISTERED_VEHICLES_INDIVIDUALS) {
-            RegisteredVehiclesIndividualsScreen(viewModel = viewModel)
-        }
-
-        composable(Routes.VEHICLE_REGISTRATION_REQUESTS) {
-            VehicleRegistrationRequestsScreen(viewModel = viewModel2)
-        }
-
-        composable(Routes.REGISTERED_VEHICLES_BULLETIN) {
-            RegisteredVehiclesBulletinScreen(viewModel = viewModel3)
-        }
-
-
-    }
+     }
 }

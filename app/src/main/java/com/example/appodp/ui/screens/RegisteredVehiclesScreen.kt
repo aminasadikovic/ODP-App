@@ -1,5 +1,7 @@
+// com.example.appodp.ui.screens.RegisteredVehiclesScreen.kt
 package com.example.appodp.ui.screens
 
+import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,137 +9,202 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.appodp.viewmodel.RegisteredVehiclesViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Sort
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.appodp.viewmodel.RegisteredVehiclesViewModelFactory
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.example.appodp.data.model.RegisteredVehicleUiItem // KLJUČNO: Import RegisteredVehicleUiItem
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.ui.graphics.Color
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisteredVehiclesScreen(viewModel: RegisteredVehiclesViewModel) {
-    val vehicles by viewModel.vehicles.collectAsState()
+fun RegisteredVehiclesScreen() { // Uklonjen onNavigateToDetails, jer nema detail ekrana
+    val context = LocalContext.current
+    val application = context.applicationContext as Application
+    val viewModel: RegisteredVehiclesViewModel = viewModel(
+        factory = RegisteredVehiclesViewModelFactory(application)
+    )
+
+    // KLJUČNA PROMJENA: Ovdje sada primamo List<RegisteredVehicleUiItem>
+    val vehiclesUiItems by viewModel.filteredAndSortedVehicles.collectAsState()
     val error by viewModel.error.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val selectedEntityId by viewModel.selectedEntityId.collectAsState()
+    val selectedYear by viewModel.selectedYear.collectAsState()
+    val clientSortOption by viewModel.clientSortOption.collectAsState()
 
-    var selectedEntityLabel by remember { mutableStateOf("Svi") }
-    var selectedYearText by remember { mutableStateOf("") }  // String input od korisnika
-    var selectedMonthText by remember { mutableStateOf("") }
-    var sortOption by remember { mutableStateOf("") }
+    var expandedEntityDropdown by remember { mutableStateOf(false) }
+    var expandedYearDropdown by remember { mutableStateOf(false) }
+    var expandedSortDropdown by remember { mutableStateOf(false) }
 
-    val entityOptions = listOf("Svi", "FBIH", "RS", "BD")
-    val sortOptions = listOf("Bez sortiranja", "Po mjesecu (1-12)", "Po ukupnom broju (opadajuće)")
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
-    // Parsiraj stringove u Int? da prosledimo ViewModelu
-    val selectedYear = selectedYearText.toIntOrNull()
-    val selectedMonth = selectedMonthText.toIntOrNull()
+    val entityOptions = listOf(
+        Triple("Svi", 0, 0),
+        Triple("FBIH", 1, 0),
+        Triple("RS", 2, 0),
+        Triple("BD", 3, 0)
+    )
 
-    // Mapiranje entiteta u ID
-    val entityId = when (selectedEntityLabel) {
-        "FBIH" -> 1
-        "RS" -> 2
-        "BD" -> 3
-        else -> 0
-    }
+    val yearOptions = listOf(null) + (2023..2025).toList().reversed()
+    val sortOptions = listOf("Bez sortiranja", "Po ukupnom broju (opadajuće)")
 
-    // Kad se promijene filteri ili sortiranje, reload podataka
-    LaunchedEffect(entityId, selectedYear, selectedMonth) {
-        viewModel.loadVehicles(entityId, selectedYear, selectedMonth)
-    }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Registrovana vozila", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(bottom = 16.dp))
+        Text(
+            text = "Registrovana vozila",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        // Entity filter
-        Text("Odaberi entitet:")
-        var entityExpanded by remember { mutableStateOf(false) }
-        Box {
-            Button(onClick = { entityExpanded = true }) {
-                Text(selectedEntityLabel)
-            }
-            DropdownMenu(expanded = entityExpanded, onDismissRequest = { entityExpanded = false }) {
-                entityOptions.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            selectedEntityLabel = option
-                            entityExpanded = false
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "Entitet:", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(4.dp))
+                Box {
+                    Button(onClick = { expandedEntityDropdown = true }) {
+                        Text(text = entityOptions.find { it.second == selectedEntityId }?.first ?: "Svi")
+                    }
+                    DropdownMenu(expanded = expandedEntityDropdown, onDismissRequest = { expandedEntityDropdown = false }) {
+                        entityOptions.forEach { (label, entityId, _) ->
+                            DropdownMenuItem(
+                                text = { Text(text = label) },
+                                onClick = {
+                                    viewModel.updateSelectedEntityId(entityId)
+                                    expandedEntityDropdown = false
+                                }
+                            )
                         }
-                    )
+                    }
+                }
+            }
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "Godina:", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(4.dp))
+                Box {
+                    Button(onClick = { expandedYearDropdown = true }) {
+                        Text(text = selectedYear?.toString() ?: "Odaberite godinu")
+                    }
+                    DropdownMenu(expanded = expandedYearDropdown, onDismissRequest = { expandedYearDropdown = false }) {
+                        yearOptions.forEach { year ->
+                            DropdownMenuItem(
+                                text = { Text(text = year?.toString() ?: "Odaberite godinu") },
+                                onClick = {
+                                    viewModel.updateSelectedYear(year)
+                                    expandedYearDropdown = false
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Year filter (text input)
-        OutlinedTextField(
-            value = selectedYearText,
-            onValueChange = { selectedYearText = it.filter { c -> c.isDigit() } },
-            label = { Text("Godina (npr. 2023)") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        // Month filter (text input)
-        OutlinedTextField(
-            value = selectedMonthText,
-            onValueChange = {
-                selectedMonthText = it.filter { c -> c.isDigit() }
-                    .take(2) // max 2 cifre
-            },
-            label = { Text("Mjesec (1-12)") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        // Sortiranje dropdown
-        Text("Sortiraj po:")
-        var sortExpanded by remember { mutableStateOf(false) }
         Box {
-            Button(onClick = { sortExpanded = true }) {
-                Text(sortOption.ifEmpty { "Bez sortiranja" })
+            Button(onClick = { expandedSortDropdown = true }) {
+                Icon(imageVector = Icons.Default.Sort, contentDescription = "Sortiraj")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = clientSortOption.ifEmpty { "Bez sortiranja" })
             }
-            DropdownMenu(expanded = sortExpanded, onDismissRequest = { sortExpanded = false }) {
+            DropdownMenu(expanded = expandedSortDropdown, onDismissRequest = { expandedSortDropdown = false }) {
                 sortOptions.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option) },
+                        text = { Text(text = option) },
                         onClick = {
-                            sortOption = option
-                            sortExpanded = false
+                            viewModel.updateClientSortOption(option)
+                            expandedSortDropdown = false
                         }
                     )
                 }
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        if (error.isNotEmpty()) {
-            Text("Greška: $error", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)
-        } else {
-            val listToDisplay = when (sortOption) {
-                "Po mjesecu (1-12)" -> vehicles.sortedBy { it.month ?: 0 }
-                "Po ukupnom broju (opadajuće)" -> vehicles.sortedByDescending { it.total }
-                else -> vehicles
-            }
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize()
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = { viewModel.fetchDataFromNetwork() }
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(listToDisplay) { vehicle ->
-                    Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(4.dp)) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Mjesto registracije: ${vehicle.registrationPlace}", style = MaterialTheme.typography.titleMedium)
-                            Spacer(Modifier.height(4.dp))
-                            Text("Domaća vozila: ${vehicle.totalDomestic}")
-                            Text("Strana vozila: ${vehicle.totalForeign}")
-                            Text("Ukupno: ${vehicle.total}")
-                            Text("Godina: ${vehicle.year ?: "-"}")
-                            Text("Mjesec: ${vehicle.month ?: "-"}")
+                if (error != null) {
+                    Text(
+                        "Greška: $error",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                if (isLoading && vehiclesUiItems.isEmpty()) { // Koristi vehiclesUiItems
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                } else if (vehiclesUiItems.isEmpty()) { // Koristi vehiclesUiItems
+                    Text("Nema pronađenih podataka.", color = MaterialTheme.colorScheme.onSurface)
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(vehiclesUiItems) { uiItem -> // KLJUČNA PROMJENA: Sada je 'uiItem' tipa RegisteredVehicleUiItem
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                // Uklonjen .clickable { onNavigateToDetails(vehicle) }
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        // Pristupite podacima preko uiItem.vehicle
+                                        Text(text = "Mjesto registracije: ${uiItem.vehicle.registrationPlace}", style = MaterialTheme.typography.titleMedium)
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(text = "Domaća vozila: ${uiItem.vehicle.totalDomestic}")
+                                        Text(text = "Strana vozila: ${uiItem.vehicle.totalForeign}")
+                                        Text(text = "Ukupno: ${uiItem.vehicle.total}")
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    // Srce za favorite u donjem desnom uglu
+                                    IconButton(
+                                        onClick = {
+                                            // KLJUČNA PROMJENA: Pozovi toggle funkciju s cijelim uiItem objektom
+                                            viewModel.toggleFavoriteStatus(uiItem)
+                                        },
+                                        modifier = Modifier.align(Alignment.Bottom)
+                                    ) {
+                                        Icon(
+                                            // KLJUČNA PROMJENA: Pristupite isFavorite statusu direktno iz uiItem
+                                            imageVector = if (uiItem.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                            contentDescription = if (uiItem.isFavorite) "Ukloni iz favorita" else "Dodaj u favorite",
+                                            tint = if (uiItem.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

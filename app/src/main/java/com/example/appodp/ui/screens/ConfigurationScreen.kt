@@ -1,3 +1,4 @@
+// com.example.appodp.ui.screens.ConfigurationScreen.kt
 package com.example.appodp.ui.screens
 
 import androidx.compose.material3.*
@@ -13,9 +14,8 @@ fun ConfigurationScreen(navController: NavController) {
     val options = listOf(
         "Broj aktivnih registracija",
         "Registrovana vozila",
-        "Registrovana vozila od strane fizičkih lica",
         "Broj zahtjeva za registraciju vozila",
-        "Bilteni registrovanih vozila"
+        "Sačuvana registrovana vozila" // NOVO: Dodana opcija za favorite
     )
     var selectedDataSet by remember { mutableStateOf(options[0]) }
 
@@ -63,18 +63,13 @@ fun ConfigurationScreen(navController: NavController) {
                             popUpTo(Routes.CONFIGURATION) { inclusive = true }
                         }
                     }
-                    "Registrovana vozila od strane fizičkih lica" -> {
-                        navController.navigate(Routes.REGISTERED_VEHICLES_INDIVIDUALS) {
-                            popUpTo(Routes.CONFIGURATION) { inclusive = true }
-                        }
-                    }
                     "Broj zahtjeva za registraciju vozila" -> {
                         navController.navigate(Routes.VEHICLE_REGISTRATION_REQUESTS) {
                             popUpTo(Routes.CONFIGURATION) { inclusive = true }
                         }
                     }
-                    "Bilteni registrovanih vozila" -> {
-                        navController.navigate(Routes.REGISTERED_VEHICLES_BULLETIN) {
+                    "Sačuvana registrovana vozila" -> { // NOVO: Navigacija na favorite
+                        navController.navigate(Routes.FAVORITE_REGISTERED_VEHICLES) {
                             popUpTo(Routes.CONFIGURATION) { inclusive = true }
                         }
                     }

@@ -4,7 +4,5 @@ data class RegisteredVehicle(
     val registrationPlace: String,
     val totalDomestic: Int,
     val totalForeign: Int,
-    val total: Int,
-    val month:Int?,
-    val year:Int?
+    val total: Int
 )

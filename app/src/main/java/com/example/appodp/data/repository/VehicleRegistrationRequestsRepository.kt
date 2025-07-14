@@ -1,15 +1,34 @@
+// com.example.appodp.data.repository.VehicleRegistrationRequestsRepository.kt
 package com.example.appodp.data.repository
 
 import com.example.appodp.data.api.RetrofitInstance
+import com.example.appodp.data.local.dao.VehicleRegistrationRequestDao // Dodano
+import com.example.appodp.data.local.entity.toDomain // Dodano
+import com.example.appodp.data.local.entity.toEntity // Dodano
 import com.example.appodp.data.model.*
+import kotlinx.coroutines.CoroutineScope // Dodano
+import kotlinx.coroutines.flow.Flow // Dodano
+import kotlinx.coroutines.flow.map // Dodano
+import kotlinx.coroutines.launch // Dodano
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class VehicleRegistrationRequestsRepository {
+class VehicleRegistrationRequestsRepository(
+    private val dao: VehicleRegistrationRequestDao // NOVO: Dodan DAO kao zavisnost
+) {
 
-    fun fetchRequests(
+    // NOVO: Funkcija za dohvaćanje keširanih podataka kao Flow
+    fun getCachedVehicleRegistrationRequests(): Flow<List<VehicleRegistrationRequestResponse>> {
+        return dao.getAllVehicleRegistrationRequests().map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
+    // PROMIJENJENO: Funkcija za dohvaćanje podataka s mreže i keširanje
+    fun fetchAndCacheRequests(
         request: VehicleRegistrationRequestRequest,
+        scope: CoroutineScope, // NOVO: Primamo CoroutineScope iz ViewModela
         onSuccess: (List<VehicleRegistrationRequestResponse>) -> Unit,
         onError: (String) -> Unit
     ) {
@@ -23,12 +42,17 @@ class VehicleRegistrationRequestsRepository {
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body?.errors.isNullOrEmpty()) {
-                        onSuccess(body?.result ?: emptyList())
+                        val apiRequests = body?.result ?: emptyList()
+                        scope.launch { // Pokrenite Room operacije unutar proslijeđenog scope-a
+                            dao.deleteAllVehicleRegistrationRequests() // Očisti stari keš
+                            dao.insertAll(apiRequests.map { it.toEntity() }) // Spremi nove
+                            onSuccess(apiRequests) // Obavijesti ViewModel
+                        }
                     } else {
-                        onError(body?.errors?.joinToString() ?: "Greška u odgovoru.")
+                        onError(body?.errors?.joinToString() ?: "Greška u odgovoru API-ja.")
                     }
                 } else {
-                    onError("Neuspješan odgovor: ${response.code()}")
+                    onError("Neuspješan odgovor: ${response.code()} - ${response.message()}")
                 }
             }
 

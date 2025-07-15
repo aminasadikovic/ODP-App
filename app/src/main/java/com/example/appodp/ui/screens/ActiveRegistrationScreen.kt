@@ -111,7 +111,7 @@ fun ActiveRegistrationScreen(
                     .padding(bottom = 8.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant) // Boja kartice prema temi
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(
                     modifier = Modifier
@@ -144,7 +144,7 @@ fun ActiveRegistrationScreen(
                     Button(
                         onClick = { viewModel.toggleSortByTotal() },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface), // Boja dugmeta kao manja kartica
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                     ) {
                         Icon(
@@ -194,7 +194,7 @@ fun ActiveRegistrationScreen(
                                         Card(
                                             modifier = Modifier.fillMaxWidth(),
                                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Boja kartice za stavku
+                                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                                         ) {
                                             Column(modifier = Modifier.padding(16.dp)) {
                                                 Text(
@@ -220,7 +220,6 @@ fun ActiveRegistrationScreen(
     }
 }
 
-// Funkcija za dijeljenje podataka o aktivnim registracijama (ostaje ista)
 fun shareActiveRegistrationsData(context: Context, registrations: List<ActiveRegistration>) {
     val odpLink = "https://odp.iddeea.gov.ba/datasets/number-of-active-registrations/18"
 

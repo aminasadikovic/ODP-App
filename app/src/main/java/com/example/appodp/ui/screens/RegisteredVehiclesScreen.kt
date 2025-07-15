@@ -124,7 +124,6 @@ fun RegisteredVehiclesScreen(
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Filter po entitetu
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = "Entitet:",

@@ -16,64 +16,63 @@ import com.example.appodp.navigation.BottomNavigationBar // Import BottomNavigat
 @Composable
 fun VehicleRequestDetailsScreen(
     request: VehicleRegistrationRequestResponse,
-    navController: NavHostController // Dodajemo navController
+    navController: NavHostController
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Detalji zahtjeva", // Naslov ekrana
+                        text = "Detalji zahtjeva",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant // Boja naslova
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
-                // Uklonjeno navigationIcon (dugme za nazad) jer će BottomNavigationBar to preuzeti
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant // Boja TopAppBar-a kao kartica
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             )
         },
         bottomBar = {
-            BottomNavigationBar(navController = navController) // Dodana BottomNavigationBar
+            BottomNavigationBar(navController = navController)
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Primijeni padding od Scaffold-a
-                .padding(16.dp), // Dodatni padding za cijeli ekran
-            horizontalAlignment = Alignment.CenterHorizontally, // Centriraj karticu horizontalno
+                .padding(paddingValues)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(16.dp)) // Dodatni razmak ispod TopAppBar-a
+            Spacer(modifier = Modifier.height(16.dp))
 
             Card(
                 modifier = Modifier
-                    .fillMaxWidth() // Kartica popunjava širinu
-                    .padding(horizontal = 8.dp), // Mali horizontalni padding za karticu
-                shape = RoundedCornerShape(16.dp), // Zaobljeni uglovi
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), // Sjaj kartice
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant) // Boja kartice prema temi
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(24.dp) // Padding unutar kartice
+                        .padding(24.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(8.dp) // Razmak između redova detalja
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
                         text = "Detalji za mjesto: ${request.registrationPlace}",
-                        style = MaterialTheme.typography.titleLarge, // Veći stil za glavni naslov unutar kartice
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(bottom = 8.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant // Boja teksta kao na kartici
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Divider(
                         modifier = Modifier.padding(vertical = 4.dp),
-                        color = MaterialTheme.colorScheme.outline // Boja linije
+                        color = MaterialTheme.colorScheme.outline
                     )
 
                     DetailRow(
@@ -108,7 +107,7 @@ fun VehicleRequestDetailsScreen(
 }
 
 @Composable
-fun DetailRow(label: String, value: String, textColor: androidx.compose.ui.graphics.Color) { // Dodan textColor parametar
+fun DetailRow(label: String, value: String, textColor: androidx.compose.ui.graphics.Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,7 +115,7 @@ fun DetailRow(label: String, value: String, textColor: androidx.compose.ui.graph
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyLarge, color = textColor) // Primijeni boju
-        Text(text = value, style = MaterialTheme.typography.bodyMedium, color = textColor) // Primijeni boju
+        Text(text = label, style = MaterialTheme.typography.bodyLarge, color = textColor)
+        Text(text = value, style = MaterialTheme.typography.bodyMedium, color = textColor)
     }
 }

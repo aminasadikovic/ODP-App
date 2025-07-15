@@ -125,7 +125,6 @@ fun ConfigurationScreen(
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        // Dugme kao kartica u boji
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                     ) {

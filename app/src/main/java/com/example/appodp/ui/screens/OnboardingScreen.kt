@@ -78,7 +78,7 @@ fun OnboardingScreen(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(32.dp)) // Podesi visinu po potrebi
+            Spacer(modifier = Modifier.height(32.dp))
 
             Card(
                 modifier = Modifier

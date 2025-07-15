@@ -109,7 +109,7 @@ fun FavoriteRegisteredVehiclesScreen(navController: NavHostController) {
                     .padding(bottom = 8.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant) // Boja kartice prema temi
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(
                     modifier = Modifier
@@ -150,7 +150,7 @@ fun FavoriteRegisteredVehiclesScreen(navController: NavHostController) {
                                         Card(
                                             modifier = Modifier.fillMaxWidth(),
                                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Malo tamnija/svjetlija boja od glavne kartice
+                                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                                         ) {
                                             Row(
                                                 modifier = Modifier
@@ -189,7 +189,7 @@ fun FavoriteRegisteredVehiclesScreen(navController: NavHostController) {
                                                         Icon(
                                                             imageVector = if (uiItem.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                                                             contentDescription = if (uiItem.isFavorite) "Ukloni iz favorita" else "Dodaj u favorite",
-                                                            tint = if (uiItem.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface // Boja ikone na manjoj kartici
+                                                            tint = if (uiItem.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
                                                         )
                                                     }
 
@@ -218,7 +218,7 @@ fun FavoriteRegisteredVehiclesScreen(navController: NavHostController) {
     }
 }
 
-// Funkcija za dijeljenje podataka o vozilu - izvan Composable funkcije
+
 fun shareVehicleData(context: Context, vehicle: RegisteredVehicleUiItem) {
     val shareText = """
         Informacije o registrovanom vozilu:

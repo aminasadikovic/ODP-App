@@ -1,4 +1,3 @@
-// com.example.appodp.viewmodel.ActiveRegistrationViewModel.kt
 package com.example.appodp.viewmodel
 
 import android.app.Application
@@ -36,7 +35,6 @@ class ActiveRegistrationViewModel(
     private val _filteredAndSortedRegistrations = MutableStateFlow<List<ActiveRegistration>>(emptyList())
     val filteredAndSortedRegistrations: StateFlow<List<ActiveRegistration>> = _filteredAndSortedRegistrations.asStateFlow()
 
-    // StateFlow for grouped data by entities for the graph
     private val _registrationsByEntity = MutableStateFlow<Map<String, Int>>(emptyMap())
     val registrationsByEntity: StateFlow<Map<String, Int>> = _registrationsByEntity.asStateFlow()
 
@@ -59,8 +57,6 @@ class ActiveRegistrationViewModel(
             }
             .launchIn(viewModelScope)
 
-        // Combination for grouping by entities
-        // Listens to changes in _registrations and updates _registrationsByEntity
         _registrations
             .onEach { regs ->
                 _registrationsByEntity.value = groupRegistrationsByEntity(regs)
@@ -130,10 +126,8 @@ class ActiveRegistrationViewModel(
         }
     }
 
-    // Function for grouping by entities (heuristic) - 'Ostalo' category removed
     private fun groupRegistrationsByEntity(registrations: List<ActiveRegistration>): Map<String, Int> {
         val entityTotals = mutableMapOf<String, Int>()
-        // Lists of cities within each entity (this is a heuristic, ideally it would be to have entityId in the data)
         val fbihPlaces = listOf("Sarajevo", "Mostar", "Tuzla", "Zenica", "Bihać", "Travnik", "Orašje", "Goražde", "Livno", "Široki Brijeg", "Posušje", "Grude", "Konjic", "Jablanica", "Prozor-Rama", "Čapljina", "Stolac", "Neum", "Kiseljak", "Vitez", "Novi Travnik", "Bugojno", "Donji Vakuf", "Jajce", "Busovača", "Kreševo", "Fojnica", "Gornji Vakuf-Uskoplje", "Dobretići", "Kakanj", "Maglaj", "Žepče", "Zavidovići", "Olovo", "Vareš", "Breza", "Visoko", "Doboj Jug", "Usora", "Tešanj", "Kladanj", "Banovići", "Živinice", "Srebrenik", "Gračanica", "Gradačac", "Lukavac", "Kalesija", "Sapna", "Čelić", "Doboj Istok", "Odžak", "Domaljevac-Šamac", "Bosanski Petrovac", "Bosansko Grahovo", "Drvar", "Glamoč", "Kupres", "Tomislavgrad")
         val rsPlaces = listOf("Banja Luka", "Bijeljina", "Prijedor", "Doboj", "Trebinje", "Istočno Sarajevo", "Zvornik", "Gradiška", "Teslić", "Kozarska Dubica", "Mrkonjić Grad", "Foča", "Višegrad", "Pale", "Sokolac", "Modriča", "Derventa", "Laktaši", "Prnjavor", "Šamac", "Brod", "Han Pijesak", "Čajniče", "Nevesinje", "Gacko", "Berkovići", "Ljubinje", "Kalinovik", "Rogatica", "Milići", "Vlasenica", "Srebrenica", "Bratunac", "Kotor Varoš", "Šipovo", "Ribnik", "Jezero", "Krupa na Uni", "Novi Grad", "Kostajnica", "Oštra Luka", "Petrovac", "Donji Žabar", "Pelagićevo", "Vukosavlje", "Stanari", "Osmaci", "Kneževo", "Čelinac", "Trnovo (RS)", "Istočni Stari Grad", "Istočna Ilidža", "Istočno Novo Sarajevo", "Istočni Drvar", "Kupres (RS)", "Novo Goražde", "Petrovo", "Rudo", "Višegrad", "Zvornik")
         val bdPlaces = listOf("Brčko")
@@ -144,9 +138,8 @@ class ActiveRegistrationViewModel(
                 fbihPlaces.any { place.contains(it, ignoreCase = true) } -> "FBiH"
                 rsPlaces.any { place.contains(it, ignoreCase = true) } -> "RS"
                 bdPlaces.any { place.contains(it, ignoreCase = true) } -> "BD"
-                else -> null // If no match, set to null to exclude from totals
+                else -> null
             }
-            // Only add to totals if an entity is identified
             if (entity != null) {
                 entityTotals[entity] = entityTotals.getOrDefault(entity, 0) + reg.total
             }

@@ -1,4 +1,3 @@
-// com.example.appodp.data.repository.RegisteredVehiclesRepository.kt
 package com.example.appodp.data.repository
 
 import com.example.appodp.data.model.ApiResponse
@@ -29,18 +28,14 @@ class RegisteredVehiclesRepository(
         return registeredVehicleDao.getAllRegisteredVehicles()
     }
 
-    // Ova funkcija je još uvijek korisna ako želite poseban ekran s favoritima
     fun getFavoriteRegisteredVehicles(): Flow<List<RegisteredVehicle>> {
         return registeredVehicleDao.getAllFavoriteRegisteredVehicles().map { entities ->
             entities.map { it.toDomain() }
         }
     }
 
-    // Toggle funkcija sada koristi isključivo RegisteredVehicleEntity ID za ažuriranje
-    // jer se isFavorite status pohranjuje direktno u entitet
     suspend fun toggleFavoriteStatus(entityId: Int, currentIsFavorite: Boolean) {
         withContext(Dispatchers.IO) {
-            // Dohvati entitet po ID-u
             val existingEntity = registeredVehicleDao.getAllRegisteredVehicles().firstOrNull()?.find { it.id == entityId }
 
             existingEntity?.let { entity ->
@@ -69,20 +64,15 @@ class RegisteredVehiclesRepository(
                         val apiVehicles = body?.result ?: emptyList()
                         scope.launch {
                             withContext(Dispatchers.IO) {
-                                // Dohvati trenutno postojeće entitete iz baze
                                 val existingEntities = registeredVehicleDao.getAllRegisteredVehicles().firstOrNull() ?: emptyList()
-                                // Kreiraj mapu radi brže pretrage favorita
                                 val existingFavoriteMap = existingEntities
                                     .filter { it.isFavorite }
                                     .associateBy { "${it.registrationPlace}-${it.totalDomestic}-${it.totalForeign}-${it.total}" }
 
                                 val entitiesToInsert = apiVehicles.map { apiVehicle ->
                                     val key = "${apiVehicle.registrationPlace}-${apiVehicle.totalDomestic}-${apiVehicle.totalForeign}-${apiVehicle.total}"
-                                    // Provjeri je li API vozilo već favorit u bazi
                                     val isFav = existingFavoriteMap.containsKey(key)
 
-                                    // Ako postoji, iskoristi ID postojećeg entiteta kako bi Room znao ažurirati, a ne umetnuti novi red.
-                                    // Ako ne postoji, ID će biti 0 i Room će ga generisati.
                                     val existingId = existingEntities.find {
                                         it.registrationPlace == apiVehicle.registrationPlace &&
                                                 it.totalDomestic == apiVehicle.totalDomestic &&
@@ -91,17 +81,17 @@ class RegisteredVehiclesRepository(
                                     }?.id ?: 0
 
                                     RegisteredVehicleEntity(
-                                        id = existingId, // Koristi postojeći ID ako entitet već postoji
+                                        id = existingId,
                                         registrationPlace = apiVehicle.registrationPlace,
                                         totalDomestic = apiVehicle.totalDomestic,
                                         totalForeign = apiVehicle.totalForeign,
                                         total = apiVehicle.total,
-                                        isFavorite = isFav // Postavi isFavorite status
+                                        isFavorite = isFav
                                     )
                                 }
 
-                                registeredVehicleDao.deleteAllRegisteredVehicles() // Obriši sve stare podatke
-                                registeredVehicleDao.insertAll(entitiesToInsert) // Ubaci ažurirane podatke
+                                registeredVehicleDao.deleteAllRegisteredVehicles()
+                                registeredVehicleDao.insertAll(entitiesToInsert)
                             }
                             onSuccess(apiVehicles)
                         }

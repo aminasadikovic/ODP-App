@@ -1,4 +1,3 @@
-// com.example.appodp.data.repository.ActiveRegistrationsRepository.kt
 package com.example.appodp.data.repository
 
 import com.example.appodp.data.api.RetrofitInstance
@@ -17,20 +16,18 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class ActiveRegistrationsRepository(
-    private val registrationDao: RegistrationDao // PROMIJENJENO: Samo DAO, nema Context-a
+    private val registrationDao: RegistrationDao
 ) {
-    // DODANO: Funkcija za dohvaćanje keširanih podataka kao Flow
     fun getCachedActiveRegistrations(): Flow<List<ActiveRegistration>> {
         return registrationDao.getAllRegistrations().map { entities ->
-            println("ROOM → Pronađeno ${entities.size} zapisa") // ← Dodaj ovo za provjeru
+            println("ROOM → Pronađeno ${entities.size} zapisa")
             entities.map { it.toDomain() }
         }
     }
 
-    // PROMIJENJENO: Funkcija za dohvaćanje podataka s mreže i keširanje
     fun fetchAndCacheRegistrations(
         request: ActiveRegistrationRequest,
-        scope: CoroutineScope, // DODANO: Primamo CoroutineScope iz ViewModela
+        scope: CoroutineScope,
         onSuccess: (List<ActiveRegistration>) -> Unit,
         onError: (String) -> Unit
     ) {
@@ -45,10 +42,10 @@ class ActiveRegistrationsRepository(
                     val body = response.body()
                     if (body?.errors.isNullOrEmpty()) {
                         val apiRegistrations = body?.result ?: emptyList()
-                        scope.launch { // Pokrenite Room operacije unutar proslijeđenog scope-a
-                            registrationDao.deleteAllRegistrations() // Očisti stari keš
-                            registrationDao.insertAll(apiRegistrations.map { it.toEntity() }) // Spremi nove
-                            onSuccess(apiRegistrations) // Obavijesti ViewModel
+                        scope.launch {
+                            registrationDao.deleteAllRegistrations()
+                            registrationDao.insertAll(apiRegistrations.map { it.toEntity() })
+                            onSuccess(apiRegistrations)
                         }
                     } else {
                         onError(body?.errors?.joinToString() ?: "Greška u odgovoru API-ja.")

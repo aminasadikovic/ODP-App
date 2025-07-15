@@ -1,4 +1,3 @@
-// com.example.appodp.data.local.dao.RegisteredVehicleDao.kt
 package com.example.appodp.data.local.dao
 
 import androidx.room.Dao
@@ -23,12 +22,9 @@ interface RegisteredVehicleDao {
     @Update
     suspend fun updateRegisteredVehicle(vehicle: RegisteredVehicleEntity)
 
-    // Ova metoda je sada manje kritična za glavni ekran jer se isFavorite status dohvaća sa svim vozilima,
-    // ali može biti korisna za zaseban ekran "Moji Favoriti" ako ga ikada implementirate.
     @Query("SELECT * FROM registered_vehicles WHERE isFavorite = 1")
     fun getAllFavoriteRegisteredVehicles(): Flow<List<RegisteredVehicleEntity>>
 
-    // Važno: ova metoda sada vraća entitet koji sadrži i ID i isFavorite status.
     @Query("SELECT * FROM registered_vehicles WHERE registrationPlace = :registrationPlace AND totalDomestic = :totalDomestic AND totalForeign = :totalForeign AND total = :total LIMIT 1")
     suspend fun getRegisteredVehicleByFields(
         registrationPlace: String,

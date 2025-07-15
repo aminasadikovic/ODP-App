@@ -1,4 +1,3 @@
-// com.example.appodp.util.NetworkUtils.kt
 package com.example.appodp.util
 
 import android.content.Context

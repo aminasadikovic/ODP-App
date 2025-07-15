@@ -1,4 +1,3 @@
-// com.example.appodp.data.local.dao.RegistrationDao.kt
 package com.example.appodp.data.local.dao
 
 import androidx.room.Dao
@@ -11,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RegistrationDao {
     @Query("SELECT * FROM registrations")
-    fun getAllRegistrations(): Flow<List<RegistrationEntity>> // Koristite Flow za reaktivno čitanje
+    fun getAllRegistrations(): Flow<List<RegistrationEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(registrations: List<RegistrationEntity>)
 
     @Query("DELETE FROM registrations")
-    suspend fun deleteAllRegistrations() // Preimenovano za jasnoću
+    suspend fun deleteAllRegistrations()
 }

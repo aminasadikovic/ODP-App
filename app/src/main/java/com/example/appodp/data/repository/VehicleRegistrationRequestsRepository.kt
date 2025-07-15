@@ -1,4 +1,3 @@
-// com.example.appodp.data.repository.VehicleRegistrationRequestsRepository.kt
 package com.example.appodp.data.repository
 
 import com.example.appodp.data.api.RetrofitInstance
@@ -15,20 +14,18 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class VehicleRegistrationRequestsRepository(
-    private val dao: VehicleRegistrationRequestDao // NOVO: Dodan DAO kao zavisnost
+    private val dao: VehicleRegistrationRequestDao
 ) {
 
-    // NOVO: Funkcija za dohvaćanje keširanih podataka kao Flow
     fun getCachedVehicleRegistrationRequests(): Flow<List<VehicleRegistrationRequestResponse>> {
         return dao.getAllVehicleRegistrationRequests().map { entities ->
             entities.map { it.toDomain() }
         }
     }
 
-    // PROMIJENJENO: Funkcija za dohvaćanje podataka s mreže i keširanje
     fun fetchAndCacheRequests(
         request: VehicleRegistrationRequestRequest,
-        scope: CoroutineScope, // NOVO: Primamo CoroutineScope iz ViewModela
+        scope: CoroutineScope,
         onSuccess: (List<VehicleRegistrationRequestResponse>) -> Unit,
         onError: (String) -> Unit
     ) {
@@ -43,10 +40,10 @@ class VehicleRegistrationRequestsRepository(
                     val body = response.body()
                     if (body?.errors.isNullOrEmpty()) {
                         val apiRequests = body?.result ?: emptyList()
-                        scope.launch { // Pokrenite Room operacije unutar proslijeđenog scope-a
-                            dao.deleteAllVehicleRegistrationRequests() // Očisti stari keš
-                            dao.insertAll(apiRequests.map { it.toEntity() }) // Spremi nove
-                            onSuccess(apiRequests) // Obavijesti ViewModel
+                        scope.launch {
+                            dao.deleteAllVehicleRegistrationRequests()
+                            dao.insertAll(apiRequests.map { it.toEntity() })
+                            onSuccess(apiRequests)
                         }
                     } else {
                         onError(body?.errors?.joinToString() ?: "Greška u odgovoru API-ja.")

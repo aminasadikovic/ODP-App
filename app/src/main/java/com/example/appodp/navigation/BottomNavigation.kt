@@ -18,12 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.appodp.navigation.Routes
 
-/**
- * A custom bottom navigation bar for the application.
- * It provides a back button and a home button.
- *
- * @param navController The NavHostController to handle navigation actions.
- */
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     BottomAppBar(

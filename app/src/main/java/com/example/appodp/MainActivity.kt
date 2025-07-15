@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.Composable // Dodaj ovaj import
 import androidx.navigation.compose.rememberNavController
 import com.example.appodp.navigation.AppNavigation
 import com.example.appodp.ui.theme.AppODPTheme

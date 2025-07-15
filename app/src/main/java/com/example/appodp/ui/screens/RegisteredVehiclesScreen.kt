@@ -1,4 +1,3 @@
-// com.example.appodp.ui.screens.RegisteredVehiclesScreen.kt
 package com.example.appodp.ui.screens
 
 import android.app.Application
@@ -31,10 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.appodp.navigation.BottomNavigationBar
 import com.example.appodp.ui.theme.DarkBackground
-// Uklonjen import za Intent i ContextCompat, kao i za ShareUtils
-// import android.content.Intent
-// import androidx.core.content.ContextCompat
-// import com.example.appodp.util.ShareUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +75,6 @@ fun RegisteredVehiclesScreen(
                     )
                 },
                 actions = {
-                    // Dugme za promjenu teme
                     IconButton(
                         onClick = onToggleTheme
                     ) {
@@ -110,7 +104,6 @@ fun RegisteredVehiclesScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Glavni sadržaj unutar Card-a
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,7 +119,6 @@ fun RegisteredVehiclesScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Filteri i sortiranje
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround,
@@ -168,7 +160,6 @@ fun RegisteredVehiclesScreen(
                             }
                         }
 
-                        // Dugme za sortiranje (zamjenjuje dropdown za sortiranje)
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = "Sortiraj:",
@@ -273,8 +264,6 @@ fun RegisteredVehiclesScreen(
                                                             tint = if (uiItem.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
                                                         )
                                                     }
-
-                                                    // Uklonjen IconButton za dijeljenje
                                                 }
                                             }
                                         }

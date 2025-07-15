@@ -1,4 +1,3 @@
-// com.example.appodp.ui.screens.ActiveRegistrationsGraphScreen.kt
 package com.example.appodp.ui.screens
 
 import android.app.Application
@@ -21,8 +20,6 @@ import com.example.appodp.navigation.BottomNavigationBar
 import com.example.appodp.ui.theme.DarkBackground
 import com.example.appodp.viewmodel.ActiveRegistrationViewModel
 import com.example.appodp.viewmodel.ActiveRegistrationViewModelFactory
-
-// Vico Charts imports
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -36,7 +33,7 @@ import com.patrykandpatrick.vico.core.entry.FloatEntry
 @Composable
 fun ActiveRegistrationsGraphScreen(
     navController: NavHostController,
-    onToggleTheme: () -> Unit // I dalje primamo, ali ne koristimo u TopAppBaru
+    onToggleTheme: () -> Unit
 ) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
@@ -47,11 +44,7 @@ fun ActiveRegistrationsGraphScreen(
     val registrationsByEntity by viewModel.registrationsByEntity.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
-
-    // isDarkThemeActive je i dalje potreban ako se koristi za bojenje UI elemenata izvan TopAppBar-a
     val isDarkThemeActive = MaterialTheme.colorScheme.background == DarkBackground
-
-    // Priprema podataka za grafikon
     val chartEntryModelProducer = remember { ChartEntryModelProducer() }
     val entityNames = remember(registrationsByEntity) { registrationsByEntity.keys.toList().sorted() }
 
@@ -62,7 +55,6 @@ fun ActiveRegistrationsGraphScreen(
         chartEntryModelProducer.setEntries(listOf(entries))
     }
 
-    // Formatter za X-osu (horizontalnu) da prikazuje nazive entiteta
     val bottomAxisValueFormatter =
         remember(entityNames) {
             AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
@@ -75,20 +67,14 @@ fun ActiveRegistrationsGraphScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Prikaz grafa", // Naslov
+                        text = "Prikaz grafa",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center, // Centriran naslov
-                        modifier = Modifier.fillMaxWidth(), // Omogućava da naslov zauzme cijelu širinu za centriranje
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                },
-                actions = {
-                    // Uklonjeno: Dugme za promjenu teme
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                }
             )
         },
         bottomBar = {
@@ -108,8 +94,8 @@ fun ActiveRegistrationsGraphScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f) // Omogući kartici da se proširi
-                    .padding(bottom = 16.dp), // Dodan donji padding za razmak od bottom nav
+                    .weight(1f)
+                    .padding(bottom = 16.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
@@ -151,7 +137,7 @@ fun ActiveRegistrationsGraphScreen(
                             bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(300.dp) // Fiksna visina za grafikon
+                                .height(300.dp)
                         )
                     }
                 }

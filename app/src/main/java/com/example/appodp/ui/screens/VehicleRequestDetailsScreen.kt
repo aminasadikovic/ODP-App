@@ -1,4 +1,3 @@
-// com.example.appodp.ui.screens.VehicleRequestDetailsScreen.kt
 package com.example.appodp.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -17,7 +16,6 @@ import com.example.appodp.navigation.BottomNavigationBar // Import BottomNavigat
 @Composable
 fun VehicleRequestDetailsScreen(
     request: VehicleRegistrationRequestResponse,
-    onBackClick: () -> Unit, // Zadržavamo callback, iako se ne koristi direktno u UI elementu
     navController: NavHostController // Dodajemo navController
 ) {
     Scaffold(

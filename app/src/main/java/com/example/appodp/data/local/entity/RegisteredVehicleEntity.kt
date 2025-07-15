@@ -12,7 +12,7 @@ data class RegisteredVehicleEntity(
     val totalDomestic: Int,
     val totalForeign: Int,
     val total: Int,
-    val isFavorite: Boolean = false // KLJUČNO: Dodano polje za favorite, default je false
+    val isFavorite: Boolean = false
 )
 
 fun RegisteredVehicleEntity.toDomain(): RegisteredVehicle {
@@ -25,14 +25,12 @@ fun RegisteredVehicleEntity.toDomain(): RegisteredVehicle {
 }
 
 fun RegisteredVehicle.toEntity(id: Int = 0, isFavorite: Boolean = false): RegisteredVehicleEntity {
-    // Ova ekstenzija bi trebala primiti id i isFavorite ako ih imate,
-    // inače će se koristiti defaultne vrijednosti (0 i false).
     return RegisteredVehicleEntity(
-        id = id, // Važno za Room da zna ažurirati postojeće
+        id = id,
         registrationPlace = this.registrationPlace,
         totalDomestic = this.totalDomestic,
         totalForeign = this.totalForeign,
         total = this.total,
-        isFavorite = isFavorite // Postavi isFavorite status
+        isFavorite = isFavorite
     )
 }

@@ -14,7 +14,7 @@ object RetrofitInstance {
         val request: Request = chain.request().newBuilder()
             .addHeader(
                 "Authorization",
-                "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMDg4IiwibmJmIjoxNzUyNTEwNDM4LCJleHAiOjE3NTI1OTY4MzgsImlhdCI6MTc1MjUxMDQzOH0.AzsBsglCpcbUEYsIKtXD_yXhhfIkcCC9F4FKkKbA6J5C1QNWDU3m-XvhRMSBzuEL9Ai5AZtrdXZ5AU43AXWalw"
+                "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMDg4IiwibmJmIjoxNzUyNTg1MTM1LCJleHAiOjE3NTI2NzE1MzUsImlhdCI6MTc1MjU4NTEzNX0.7exSvirr-O2cS54VdrBBLtzlY5KtQ5h2Y-DjD0cSgbBbzwPEWLRyGTMZxjURQNZpP3Yr1YjNrl9deG0LC-WU-Q"
             )
             .addHeader("Accept", "application/json")
             .build()

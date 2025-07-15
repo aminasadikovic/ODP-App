@@ -1,4 +1,3 @@
-// com.example.appodp.viewmodel.VehicleRegistrationRequestsViewModel.kt
 package com.example.appodp.viewmodel
 
 import android.app.Application
@@ -31,44 +30,32 @@ class VehicleRegistrationRequestsViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // Koristimo SavedStateHandle za selectedEntityId
     private val _selectedEntityId = savedStateHandle.getStateFlow("selectedEntityId", 0) // 0 za "Svi"
     val selectedEntityId: StateFlow<Int> = _selectedEntityId
 
-    // Uklonjeno: _sortByTotalAscending StateFlow
-
-    // _filteredAndSortedRequests sada samo prati _requests jer nema klijentskog sortiranja
     private val _filteredAndSortedRequests = MutableStateFlow<List<VehicleRegistrationRequestResponse>>(emptyList())
     val filteredAndSortedRequests: StateFlow<List<VehicleRegistrationRequestResponse>> = _filteredAndSortedRequests.asStateFlow()
 
     init {
-        // 1. Pratite keširane podatke iz Room baze
         repository.getCachedVehicleRegistrationRequests()
             .onEach { cachedList ->
                 _requests.value = cachedList
-                // Kada se _requests ažurira, ažuriramo i _filteredAndSortedRequests direktno
                 _filteredAndSortedRequests.value = cachedList
             }
             .launchIn(viewModelScope)
 
-        // 2. Slušajte promjene u _selectedEntityId i ponovo dohvaćajte podatke sa mreže
         _selectedEntityId
             .onEach {
                 fetchDataFromNetwork()
             }
             .launchIn(viewModelScope)
 
-        // Uklonjeno: combine blok za klijentsko sortiranje
-
-        // Odmah pokušaj dohvaćanja podataka s mreže pri inicijalizaciji
         fetchDataFromNetwork()
     }
 
     fun updateSelectedEntityId(entityId: Int) {
         savedStateHandle["selectedEntityId"] = entityId
     }
-
-    // Uklonjeno: toggleSortByTotal() funkcija
 
     fun fetchDataFromNetwork() {
         _isLoading.value = true
@@ -78,8 +65,8 @@ class VehicleRegistrationRequestsViewModel(
             val currentEntityId = _selectedEntityId.value
 
             val request = VehicleRegistrationRequestRequest(
-                updateDate = "2025-07-03", // Primjer, možete razmisliti o dinamičkim vrijednostima ili ukloniti ako API podržava null
-                entityId = currentEntityId, // Koristi odabrani entitet iz SavedStateHandle
+                updateDate = "2025-07-03",
+                entityId = currentEntityId,
                 cantonId = null,
                 municipalityId = null,
                 year = null,
@@ -105,6 +92,4 @@ class VehicleRegistrationRequestsViewModel(
             _isLoading.value = false
         }
     }
-
-    // Uklonjeno: performClientSideSorting funkcija
 }

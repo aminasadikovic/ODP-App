@@ -1,5 +1,3 @@
-// com.example.appodp.data.local.entity.RegistrationEntity.kt
-
 package com.example.appodp.data.local.entity
 
 import androidx.room.Entity
@@ -20,7 +18,6 @@ fun RegistrationEntity.toDomain(): ActiveRegistration {
     )
 }
 
-// NOVO: Funkcija za konverziju iz Domain Modela u Entity (za spremanje u bazu)
 fun ActiveRegistration.toEntity(): RegistrationEntity {
     return RegistrationEntity(
         registrationPlace = this.registrationPlace,

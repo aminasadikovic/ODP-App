@@ -1,4 +1,3 @@
-// com.example.appodp.ui.screens.ActiveRegistrationScreen.kt
 package com.example.appodp.ui.screens
 
 import android.app.Application
@@ -7,7 +6,7 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape // Import za RoundedCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
@@ -15,30 +14,29 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
-import androidx.compose.material3.TextFieldDefaults // Import za TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight // Import za FontWeight
-import androidx.compose.ui.text.style.TextAlign // Import za TextAlign
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController // Promijenjen tip na NavHostController
+import androidx.navigation.NavHostController
 import com.example.appodp.data.model.ActiveRegistration
 import com.example.appodp.viewmodel.ActiveRegistrationViewModel
 import com.example.appodp.viewmodel.ActiveRegistrationViewModelFactory
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.example.appodp.navigation.BottomNavigationBar // Import BottomNavigationBar
-import com.example.appodp.ui.theme.DarkBackground // Import DarkBackground za provjeru teme
+import com.example.appodp.navigation.BottomNavigationBar
+import com.example.appodp.ui.theme.DarkBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActiveRegistrationScreen(
-    navController: NavHostController, // Dodan navController
-    onToggleTheme: () -> Unit // Dodan callback za promjenu teme
+    navController: NavHostController,
+    onToggleTheme: () -> Unit
 ) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
@@ -54,7 +52,6 @@ fun ActiveRegistrationScreen(
     val sortByTotalAscending by viewModel.clientSortByTotalAscending.collectAsState()
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
-
     val isDarkThemeActive = MaterialTheme.colorScheme.background == DarkBackground
 
     Scaffold(
@@ -63,14 +60,13 @@ fun ActiveRegistrationScreen(
                 title = {
                     Text(
                         text = "Aktivne registracije",
-                        style = MaterialTheme.typography.headlineMedium, // Veći i istaknutiji naslov
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start, // Poravnaj lijevo
+                        textAlign = TextAlign.Start,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
                 actions = {
-                    // Dugme za dijeljenje
                     IconButton(
                         onClick = { shareActiveRegistrationsData(context, registrations) }
                     ) {
@@ -80,7 +76,6 @@ fun ActiveRegistrationScreen(
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                    // Dugme za promjenu teme
                     IconButton(
                         onClick = onToggleTheme
                     ) {
@@ -92,30 +87,28 @@ fun ActiveRegistrationScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background // Boja TopAppBar-a kao pozadina
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
         },
         bottomBar = {
-            BottomNavigationBar(navController = navController) // Dodana BottomNavigationBar
+            BottomNavigationBar(navController = navController)
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Primijeni padding od Scaffold-a
-                .padding(horizontal = 16.dp), // Horizontalni padding za cijeli ekran
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(16.dp)) // Razmak ispod TopAppBar-a
-
-            // Glavni sadržaj (pretraga, sortiranje, lista) unutar Card-a
+            Spacer(modifier = Modifier.height(16.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(bottom = 8.dp), // DODANO: Donji padding za karticu
+                    .padding(bottom = 8.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant) // Boja kartice prema temi
@@ -123,7 +116,7 @@ fun ActiveRegistrationScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp), // Padding unutar kartice
+                        .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     OutlinedTextField(
@@ -157,12 +150,12 @@ fun ActiveRegistrationScreen(
                         Icon(
                             imageVector = Icons.Default.Sort,
                             contentDescription = "Sortiraj",
-                            tint = MaterialTheme.colorScheme.onSurface // Boja ikone kao tekst na manjoj kartici
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = if (sortByTotalAscending) "Ukupno: Uzlazno" else "Ukupno: Silazno",
-                            color = MaterialTheme.colorScheme.onSurface // Boja teksta kao na manjoj kartici
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
@@ -189,7 +182,7 @@ fun ActiveRegistrationScreen(
                             } else if (registrations.isEmpty()) {
                                 Text(
                                     "Nema pronađenih podataka.",
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Boja teksta kao na kartici
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(top = 16.dp)
                                 )
                             } else {
@@ -207,12 +200,12 @@ fun ActiveRegistrationScreen(
                                                 Text(
                                                     text = "Mjesto registracije: ${item.registrationPlace}",
                                                     style = MaterialTheme.typography.titleMedium,
-                                                    color = MaterialTheme.colorScheme.onSurface // Boja teksta na stavci
+                                                    color = MaterialTheme.colorScheme.onSurface
                                                 )
                                                 Text(
                                                     text = "Ukupno: ${item.total}",
                                                     style = MaterialTheme.typography.titleMedium,
-                                                    color = MaterialTheme.colorScheme.onSurface // Boja teksta na stavci
+                                                    color = MaterialTheme.colorScheme.onSurface
                                                 )
                                             }
                                         }

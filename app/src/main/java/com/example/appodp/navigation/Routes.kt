@@ -1,4 +1,3 @@
-// com.example.appodp.navigation.Routes.kt
 package com.example.appodp.navigation
 
 import java.net.URLEncoder
@@ -14,7 +13,6 @@ object Routes {
     const val FAVORITE_REGISTERED_VEHICLES = "favorite_registered_vehicles_screen"
     const val ACTIVE_REGISTRATIONS_GRAPH = "active_registrations_graph_screen"
 
-    // Ruta za detalje VehicleRegistrationRequestResponse
     const val VEHICLE_REQUEST_DETAILS = "vehicle_request_details/" +
             "registrationPlace={registrationPlace}&" +
             "permanentRegistration={permanentRegistration}&" +

@@ -1,8 +1,6 @@
-// com.example.appodp.ui.screens.VehicleRegistrationRequestsScreen.kt
 package com.example.appodp.ui.screens
 
 import android.app.Application
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,7 +31,7 @@ import com.example.appodp.ui.theme.DarkBackground
 fun VehicleRegistrationRequestsScreen(
     onNavigateToDetails: (VehicleRegistrationRequestResponse) -> Unit,
     navController: NavHostController,
-    onToggleTheme: () -> Unit // Zadržano: onToggleTheme
+    onToggleTheme: () -> Unit
 ) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
@@ -179,7 +177,7 @@ fun VehicleRegistrationRequestsScreen(
 
                             if (isLoading && requests.isEmpty()) {
                                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-                            } else if (requests.isEmpty() && !isLoading) {
+                            } else if (requests.isEmpty()) {
                                 Text(
                                     "Nema pronađenih podataka.",
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -202,27 +200,25 @@ fun VehicleRegistrationRequestsScreen(
                                                     .fillMaxWidth()
                                                     .padding(16.dp),
                                                 verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.SpaceBetween // Postavi na SpaceBetween
+                                                horizontalArrangement = Arrangement.SpaceBetween
                                             ) {
-                                                // Prikazujemo samo Mjesto registracije
                                                 Text(
                                                     text = "Mjesto registracije: ${item.registrationPlace}",
                                                     style = MaterialTheme.typography.titleMedium,
                                                     color = MaterialTheme.colorScheme.onSurface,
-                                                    modifier = Modifier.weight(1f) // Omogućava tekstu da zauzme dostupan prostor
+                                                    modifier = Modifier.weight(1f)
                                                 )
 
-                                                // Dugme "Klikni za detalje" u donjem desnom uglu
                                                 Button(
                                                     onClick = { onNavigateToDetails(item) },
-                                                    modifier = Modifier.align(Alignment.Bottom), // Poravnaj na dno
+                                                    modifier = Modifier.align(Alignment.Bottom),
                                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface),
                                                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
-                                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp) // Manji padding
+                                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
                                                 ) {
                                                     Text(
-                                                        text = "Detalji", // Promijenjeno na "Detalji"
-                                                        style = MaterialTheme.typography.labelSmall, // Manji tekst
+                                                        text = "Detalji",
+                                                        style = MaterialTheme.typography.labelSmall,
                                                         color = MaterialTheme.colorScheme.onSurface
                                                     )
                                                 }

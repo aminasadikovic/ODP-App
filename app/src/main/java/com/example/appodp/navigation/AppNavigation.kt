@@ -1,4 +1,3 @@
-// com.example.appodp.navigation.AppNavigation.kt
 package com.example.appodp.navigation
 
 import androidx.compose.runtime.Composable
@@ -62,8 +61,8 @@ fun AppNavigation(
                         )
                     )
                 },
-                navController = navController, // Proslijeđen navController
-                onToggleTheme = onToggleTheme // Proslijeđen onToggleTheme
+                navController = navController,
+                onToggleTheme = onToggleTheme
             )
         }
         composable(
@@ -94,9 +93,7 @@ fun AppNavigation(
             )
             VehicleRequestDetailsScreen(
                 request = tempRequest,
-                onBackClick = { navController.popBackStack() },
                 navController = navController
-
             )
         }
     }

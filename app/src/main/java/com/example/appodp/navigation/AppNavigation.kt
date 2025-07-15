@@ -15,33 +15,38 @@ import com.example.appodp.ui.screens.VehicleRegistrationRequestsScreen
 import com.example.appodp.ui.screens.ActiveRegistrationScreen
 import com.example.appodp.ui.screens.VehicleRequestDetailsScreen
 import com.example.appodp.data.model.VehicleRegistrationRequestResponse
+import com.example.appodp.ui.screens.ActiveRegistrationsGraphScreen
 import com.example.appodp.ui.screens.FavoriteRegisteredVehiclesScreen
 
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
 @Composable
-fun AppNavigation(navController: NavHostController) {
-
+fun AppNavigation(
+    navController: NavHostController,
+    onToggleTheme: () -> Unit
+) {
     NavHost(navController = navController, startDestination = Routes.SPLASH) {
         composable(Routes.SPLASH) {
             SplashScreen(navController = navController)
         }
         composable(Routes.ONBOARDING) {
-            OnboardingScreen(navController = navController)
+            OnboardingScreen(navController = navController, onToggleTheme = onToggleTheme)
         }
         composable(Routes.CONFIGURATION) {
-            ConfigurationScreen(navController = navController)
+            ConfigurationScreen(navController = navController,onToggleTheme = onToggleTheme)
         }
         composable(Routes.ACTIVE_REGISTRATIONS) {
-            ActiveRegistrationScreen()
+            ActiveRegistrationScreen(navController=navController,onToggleTheme=onToggleTheme)
         }
         composable(Routes.REGISTERED_VEHICLES) {
-            // Uklonjen onNavigateToDetails callback jer nema posebnog detail ekrana za RegisteredVehicle
-            RegisteredVehiclesScreen()
+            RegisteredVehiclesScreen(navController=navController,onToggleTheme=onToggleTheme)
         }
         composable(Routes.FAVORITE_REGISTERED_VEHICLES) {
             FavoriteRegisteredVehiclesScreen(navController = navController)
+        }
+        composable(Routes.ACTIVE_REGISTRATIONS_GRAPH) {
+            ActiveRegistrationsGraphScreen(navController=navController,onToggleTheme=onToggleTheme)
         }
         composable(Routes.VEHICLE_REGISTRATION_REQUESTS) {
             VehicleRegistrationRequestsScreen(
@@ -56,7 +61,9 @@ fun AppNavigation(navController: NavHostController) {
                             deregisteredTotal = request.deregisteredTotal
                         )
                     )
-                }
+                },
+                navController = navController, // Proslijeđen navController
+                onToggleTheme = onToggleTheme // Proslijeđen onToggleTheme
             )
         }
         composable(
@@ -87,8 +94,10 @@ fun AppNavigation(navController: NavHostController) {
             )
             VehicleRequestDetailsScreen(
                 request = tempRequest,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                navController = navController
+
             )
         }
-     }
+    }
 }

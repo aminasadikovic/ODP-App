@@ -7,36 +7,39 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape // Import za RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
+import androidx.compose.material3.TextFieldDefaults // Import za TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight // Import za FontWeight
+import androidx.compose.ui.text.style.TextAlign // Import za TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController // Promijenjen tip na NavHostController
 import com.example.appodp.data.model.ActiveRegistration
 import com.example.appodp.viewmodel.ActiveRegistrationViewModel
 import com.example.appodp.viewmodel.ActiveRegistrationViewModelFactory
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.FloatEntry
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.example.appodp.navigation.BottomNavigationBar // Import BottomNavigationBar
+import com.example.appodp.ui.theme.DarkBackground // Import DarkBackground za provjeru teme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ActiveRegistrationScreen() {
+fun ActiveRegistrationScreen(
+    navController: NavHostController, // Dodan navController
+    onToggleTheme: () -> Unit // Dodan callback za promjenu teme
+) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
 
@@ -52,137 +55,169 @@ fun ActiveRegistrationScreen() {
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
-    // Priprema podataka za grafikon
-    val chartEntryModelProducer = remember { ChartEntryModelProducer() }
-    val registrationPlaces = remember(registrations) { registrations.map { it.registrationPlace } }
+    val isDarkThemeActive = MaterialTheme.colorScheme.background == DarkBackground
 
-    LaunchedEffect(registrations) {
-        val entries = registrations.mapIndexed { index, registration ->
-            FloatEntry(x = index.toFloat(), y = registration.total.toFloat())
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Aktivne registracije",
+                        style = MaterialTheme.typography.headlineMedium, // Veći i istaknutiji naslov
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start, // Poravnaj lijevo
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                actions = {
+                    // Dugme za dijeljenje
+                    IconButton(
+                        onClick = { shareActiveRegistrationsData(context, registrations) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Podijeli podatke",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    // Dugme za promjenu teme
+                    IconButton(
+                        onClick = onToggleTheme
+                    ) {
+                        Icon(
+                            imageVector = if (isDarkThemeActive) Icons.Default.LightMode else Icons.Default.DarkMode,
+                            contentDescription = if (isDarkThemeActive) "Prebaci na svijetlu temu" else "Prebaci na tamnu temu",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background // Boja TopAppBar-a kao pozadina
+                )
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController) // Dodana BottomNavigationBar
         }
-        chartEntryModelProducer.setEntries(listOf(entries))
-    }
-
-    // Formatter za X-osu (horizontalnu) da prikazuje nazive mjesta
-    val bottomAxisValueFormatter =
-        remember(registrationPlaces) {
-            AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
-                registrationPlaces.getOrNull(value.toInt()) ?: ""
-            }
-        }
-
-    SwipeRefresh(
-        state = swipeRefreshState,
-        onRefresh = { viewModel.fetchDataFromNetwork() }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(paddingValues) // Primijeni padding od Scaffold-a
+                .padding(horizontal = 16.dp), // Horizontalni padding za cijeli ekran
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            Row(
+            Spacer(modifier = Modifier.height(16.dp)) // Razmak ispod TopAppBar-a
+
+            // Glavni sadržaj (pretraga, sortiranje, lista) unutar Card-a
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .weight(1f)
+                    .padding(bottom = 8.dp), // DODANO: Donji padding za karticu
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant) // Boja kartice prema temi
             ) {
-                Text(
-                    text = "Aktivne registracije",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(
-                    onClick = {
-                        shareActiveRegistrationsData(context, registrations)
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Podijeli podatke o aktivnim registracijama",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            OutlinedTextField(
-                value = clientSearchText ?: "",
-                onValueChange = { viewModel.updateClientSearchText(it) },
-                label = { Text("Pretraži (Mjesto registracije)") },
-                singleLine = true,
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Pretraga") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = { viewModel.toggleSortByTotal() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(imageVector = Icons.Default.Sort, contentDescription = "Sortiraj")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = if (sortByTotalAscending) "Ukupno: Uzlazno" else "Ukupno: Silazno"
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // --- Početak bloka za grafikon ---
-            if (registrations.isNotEmpty()) { // Prikazujemo grafikon samo ako ima podataka
-                Text(
-                    text = "Grafički prikaz ukupnog broja registracija",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Card(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp) // Dajte grafikonu fiksnu visinu
-                        .padding(bottom = 16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        .fillMaxSize()
+                        .padding(16.dp), // Padding unutar kartice
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Chart(
-                        chart = columnChart(), // Stupčasti dijagram
-                        chartModelProducer = chartEntryModelProducer, // <-- ovo je novi tačan parametar
-                        startAxis = rememberStartAxis(), // Y-osa
-                        bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter), // X-osa sa nazivima mjesta
-                        modifier = Modifier.fillMaxSize()
+                    OutlinedTextField(
+                        value = clientSearchText,
+                        onValueChange = { viewModel.updateClientSearchText(it) },
+                        label = { Text("Pretraži (Mjesto)", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        singleLine = true,
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Pretraga", tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     )
-                }
-            }
-            // --- Kraj bloka za grafikon ---
 
-            if (error != null) {
-                Text(
-                    "Greška: $error",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            if (isLoading && registrations.isEmpty()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            } else if (registrations.isEmpty()) {
-                Text("Nema pronađenih podataka.", color = MaterialTheme.colorScheme.onSurface)
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(registrations) { item ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    Button(
+                        onClick = { viewModel.toggleSortByTotal() },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface), // Boja dugmeta kao manja kartica
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sort,
+                            contentDescription = "Sortiraj",
+                            tint = MaterialTheme.colorScheme.onSurface // Boja ikone kao tekst na manjoj kartici
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (sortByTotalAscending) "Ukupno: Uzlazno" else "Ukupno: Silazno",
+                            color = MaterialTheme.colorScheme.onSurface // Boja teksta kao na manjoj kartici
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    SwipeRefresh(
+                        state = swipeRefreshState,
+                        onRefresh = { viewModel.fetchDataFromNetwork() }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Mjesto registracije: ${item.registrationPlace}")
+                            if (error != null) {
                                 Text(
-                                    "Ukupno: ${item.total}",
-                                    style = MaterialTheme.typography.titleMedium
+                                    "Greška: $error",
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.padding(bottom = 8.dp)
                                 )
+                            }
+
+                            if (isLoading && registrations.isEmpty()) {
+                                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                            } else if (registrations.isEmpty()) {
+                                Text(
+                                    "Nema pronađenih podataka.",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Boja teksta kao na kartici
+                                    modifier = Modifier.padding(top = 16.dp)
+                                )
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    items(registrations) { item ->
+                                        Card(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Boja kartice za stavku
+                                        ) {
+                                            Column(modifier = Modifier.padding(16.dp)) {
+                                                Text(
+                                                    text = "Mjesto registracije: ${item.registrationPlace}",
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                    color = MaterialTheme.colorScheme.onSurface // Boja teksta na stavci
+                                                )
+                                                Text(
+                                                    text = "Ukupno: ${item.total}",
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                    color = MaterialTheme.colorScheme.onSurface // Boja teksta na stavci
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

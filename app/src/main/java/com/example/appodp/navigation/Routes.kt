@@ -12,6 +12,7 @@ object Routes {
     const val REGISTERED_VEHICLES = "registered_vehicles"
     const val VEHICLE_REGISTRATION_REQUESTS = "vehicle_registration_requests"
     const val FAVORITE_REGISTERED_VEHICLES = "favorite_registered_vehicles_screen"
+    const val ACTIVE_REGISTRATIONS_GRAPH = "active_registrations_graph_screen"
 
     // Ruta za detalje VehicleRegistrationRequestResponse
     const val VEHICLE_REQUEST_DETAILS = "vehicle_request_details/" +

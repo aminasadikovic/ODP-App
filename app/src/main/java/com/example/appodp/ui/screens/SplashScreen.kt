@@ -1,41 +1,41 @@
 package com.example.appodp.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.example.appodp.MainActivity
-import com.example.appodp.R
-import kotlinx.coroutines.delay
 import androidx.navigation.NavController
+import com.example.appodp.R
 import com.example.appodp.navigation.Routes
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(Unit) {
-        delay(2000) // Pauza od 2 sekunde za splash ekran
+        delay(2000)
         navController.navigate(Routes.ONBOARDING) {
             popUpTo(Routes.SPLASH) { inclusive = true }
         }
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = "Logo aplikacije",
-                modifier = Modifier.size(100.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "ODP App", style = MaterialTheme.typography.headlineMedium)
-        }
+        Image(
+            painter = painterResource(id = R.drawable.luke_chesser_hqo6uyo4nbg_unsplash),
+            contentDescription = "Logo aplikacije",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
     }
 }
